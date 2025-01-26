@@ -1,9 +1,14 @@
-import { Grid2 as Grid, styled } from "@mui/material";
+import { Route, Routes } from "react-router-dom";
 
-export const Stuff = styled(Grid)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-}));
+import { PageWrapper } from "./components/PageWrapper";
+import { CurrencyDetails } from "./pages/CurrencyDetails";
+import { Home } from "./pages/Home";
 
-export const App = () => {
-  return <Stuff>Hello</Stuff>;
-};
+export const App = () => (
+  <PageWrapper>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/currency/:currencyId" element={<CurrencyDetails />} />
+    </Routes>
+  </PageWrapper>
+);
