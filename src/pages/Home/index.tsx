@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Button,
   Grid2 as Grid,
+  Input,
   TextField,
   styled,
 } from "@mui/material";
@@ -9,8 +10,12 @@ import { debounce } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
 import { CurrencyTable } from "@/components/CurrencyTable";
-import { StoredCurrency, useCurrencyStore } from "@/useCurrencyStore";
-import { FetchedCurrency, fetchCurrencies } from "@/useFetchCoins";
+import {
+  FetchedCurrency,
+  fetchCurrencyPriceUsd,
+  searchCurrencies,
+} from "@/currencyRequests";
+import { StoredCurrency, useCurrencyStore } from "@/hooks/useCurrencyStore";
 
 export const Stuff = styled(Grid)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -21,29 +26,40 @@ const getCurrencySummary = (currency: FetchedCurrency) =>
 
 const responseToStoredCurrency = (
   currency: FetchedCurrency,
+  quantity: number,
 ): StoredCurrency => ({
   assetId: currency.id,
   name: currency.name,
   symbol: currency.symbol,
-  quantity: 0,
-  price: 0,
-  totalValue: 0,
+  quantity,
+  price: null,
+});
+
+const populateCurrencyTotalValue = (currency: StoredCurrency) => ({
+  ...currency,
+  totalValue: currency.price ? currency.quantity * currency.price : null,
 });
 
 export const Home = () => {
-  const { currencies, addCurrency } = useCurrencyStore();
+  const { currencies, addCurrency, editCurrency } = useCurrencyStore();
   const [searchInput, setSearchInput] = useState("");
   const [currencyOptions, setCurrencyOptions] = useState<FetchedCurrency[]>([]);
   const [selectedOption, setSelectedOption] = useState<FetchedCurrency | null>(
     null,
   );
+  const [currencyQuantity, setCurrencyQuantity] = useState("");
 
   const onClick = () => {
-    if (selectedOption) {
-      const newCurrency: StoredCurrency =
-        responseToStoredCurrency(selectedOption);
+    // TODO: Add validation
+    if (selectedOption && Number(currencyQuantity)) {
+      const newCurrency: StoredCurrency = responseToStoredCurrency(
+        selectedOption,
+        Number(currencyQuantity),
+      );
 
       addCurrency(newCurrency);
+      setSelectedOption(null);
+      setCurrencyQuantity("");
     }
   };
 
@@ -64,14 +80,26 @@ export const Home = () => {
     }
   };
 
+  const onChangeCurrencyQuantity = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const value = event.target.value;
+
+    if (value) {
+      setCurrencyQuantity(value);
+    }
+  };
+
   const handleSearchInputChange = useCallback(async (currencyName: string) => {
-    const response = await fetchCurrencies(currencyName);
+    if (currencyName.length >= 2) {
+      const response = await searchCurrencies(currencyName);
 
-    const currencyOptions = response.coins;
+      const currencyOptions = response.coins;
 
-    setCurrencyOptions(currencyOptions);
+      setCurrencyOptions(currencyOptions);
 
-    console.log(response);
+      console.log(response);
+    }
   }, []);
 
   useEffect(() => {
@@ -81,10 +109,33 @@ export const Home = () => {
     return () => debounced.cancel();
   }, [handleSearchInputChange, searchInput]);
 
+  const updateCurrencyPrices = useCallback(
+    async (currencies: StoredCurrency[]) => {
+      const currencyIds = currencies.map((currency) => currency.assetId);
+      const currencyPriceMap = await fetchCurrencyPriceUsd(currencyIds);
+
+      currencies.forEach((currency) => {
+        const currentUsdPrice = currencyPriceMap[currency.assetId]?.usd;
+
+        if (currentUsdPrice) {
+          const updatedCurrency = { ...currency, price: currentUsdPrice };
+
+          editCurrency(updatedCurrency);
+        }
+      });
+    },
+    [editCurrency],
+  );
+
+  useEffect(() => {
+    updateCurrencyPrices(currencies);
+  }, [updateCurrencyPrices, currencies]);
+
   return (
     <>
-      <CurrencyTable currencies={currencies} />
+      <CurrencyTable currencies={currencies.map(populateCurrencyTotalValue)} />
       <Autocomplete
+        value={selectedOption}
         filterOptions={(x) => x}
         onChange={onChange}
         onInputChange={onInputChange}
@@ -93,6 +144,11 @@ export const Home = () => {
         renderInput={(params) => (
           <TextField {...params} label="Cryptocurrency" />
         )}
+      />
+      <Input
+        value={currencyQuantity}
+        placeholder="Amount"
+        onChange={onChangeCurrencyQuantity}
       />
       <Button onClick={onClick}>Add currency</Button>
     </>

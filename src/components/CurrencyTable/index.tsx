@@ -15,8 +15,6 @@ import {
 } from "@mui/material";
 import { FC, useState } from "react";
 
-// import { useWalletState } from "@/context/WalletState";
-
 // TODO: How to handle localstorage vs component type?
 // Probably should have a conversion because localstorage is not
 // easy to migrate
@@ -25,8 +23,8 @@ type Currency = {
   name: string;
   symbol: string;
   quantity: number;
-  price: number;
-  totalValue: number;
+  price: number | null;
+  totalValue: number | null;
 };
 
 type Props = {
@@ -72,10 +70,12 @@ export const CurrencyTable: FC<Props> = ({ currencies }) => {
                   textOverflow: "ellipsis",
                 }}
               >
-                Tx id
+                Name
               </TableCell>
-              <TableCell align="right">Status</TableCell>
-              <TableCell align="right">Explorer</TableCell>
+              <TableCell align="right">Symbol</TableCell>
+              <TableCell align="right">Quantity</TableCell>
+              <TableCell align="right">Price</TableCell>
+              <TableCell align="right">Total Value</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -88,10 +88,11 @@ export const CurrencyTable: FC<Props> = ({ currencies }) => {
             ) : (
               currencies.map((currency, index) => (
                 <TableRow key={index}>
-                  <TableCell>
-                    {currency.name} {currency.symbol} {currency.quantity}{" "}
-                    {currency.price} {currency.totalValue}
-                  </TableCell>
+                  <TableCell>{currency.name}</TableCell>
+                  <TableCell>{currency.symbol}</TableCell>
+                  <TableCell>{currency.quantity}</TableCell>
+                  <TableCell>{currency.price || "-"}</TableCell>
+                  <TableCell>{currency.totalValue || "-"}</TableCell>
                 </TableRow>
               ))
             )}
