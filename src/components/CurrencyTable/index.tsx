@@ -1,25 +1,23 @@
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import {
   Box,
   CircularProgress,
   Grid2 as Grid,
-  IconButton,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { FC, useState } from "react";
 
-// TODO: How to handle localstorage vs component type?
-// Probably should have a conversion because localstorage is not
-// easy to migrate
+import { formatAssetAmount } from "@/utils/index";
+
+import { HoverableTableCell } from "./components/TableCell";
+
 type Currency = {
-  assetId: string;
+  id: string;
   name: string;
   symbol: string;
   quantity: number;
@@ -29,25 +27,18 @@ type Currency = {
 
 type Props = {
   currencies: Currency[];
+  onClickTableRow: (currency: Currency) => void;
 };
 
-export const CurrencyTable: FC<Props> = ({ currencies }) => {
-  // const { test } = useWalletState();
+export const CurrencyTable: FC<Props> = ({ currencies, onClickTableRow }) => {
   const [isFetching] = useState(false);
 
   return (
     <Box>
-      <Grid container justifyContent="space-between" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center">
         <Grid container>
-          <Grid>
-            <Typography variant="h4">Incoming Payments</Typography>
-          </Grid>
-          <Grid>
-            <Tooltip title="Transactions associated with your wallet address are fetched periodically. Incoming transactions will be displayed below as they are discovered on-chain.">
-              <IconButton>
-                <InfoOutlinedIcon />
-              </IconButton>
-            </Tooltip>
+          <Grid marginTop={1.5} marginBottom={3}>
+            <Typography variant="h3">Portfolio</Typography>
           </Grid>
         </Grid>
         <Grid container paddingRight={1}>
@@ -63,15 +54,7 @@ export const CurrencyTable: FC<Props> = ({ currencies }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell
-                sx={{
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                Name
-              </TableCell>
+              <TableCell>Name</TableCell>
               <TableCell align="right">Symbol</TableCell>
               <TableCell align="right">Quantity</TableCell>
               <TableCell align="right">Price</TableCell>
@@ -87,12 +70,26 @@ export const CurrencyTable: FC<Props> = ({ currencies }) => {
               </TableRow>
             ) : (
               currencies.map((currency, index) => (
-                <TableRow key={index}>
+                <TableRow
+                  component="tr"
+                  key={index}
+                  hover={true}
+                  onClick={() => onClickTableRow(currency)}
+                  style={{ cursor: "pointer" }}
+                >
                   <TableCell>{currency.name}</TableCell>
                   <TableCell>{currency.symbol}</TableCell>
-                  <TableCell>{currency.quantity}</TableCell>
-                  <TableCell>{currency.price || "-"}</TableCell>
-                  <TableCell>{currency.totalValue || "-"}</TableCell>
+                  <HoverableTableCell label={currency.quantity.toString()} />
+                  <HoverableTableCell
+                    label={currency.price?.toString() || "-"}
+                  />
+                  <HoverableTableCell
+                    label={
+                      currency.totalValue
+                        ? formatAssetAmount(currency.totalValue)
+                        : "-"
+                    }
+                  />
                 </TableRow>
               ))
             )}

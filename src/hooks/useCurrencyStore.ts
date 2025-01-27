@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 export type StoredCurrency = {
   // TODO: Rename id?
-  assetId: string;
+  id: string;
   name: string;
   symbol: string;
   quantity: number;
@@ -14,7 +14,7 @@ export type CurrencyStore = {
   currencies: StoredCurrency[];
   addCurrency: (currency: StoredCurrency) => void;
   editCurrency: (currency: StoredCurrency) => void;
-  removeCurrency: (assetId: string) => void;
+  removeCurrency: (id: string) => void;
 };
 
 export const useCurrencyStore = create<CurrencyStore>()(
@@ -28,13 +28,13 @@ export const useCurrencyStore = create<CurrencyStore>()(
       editCurrency: (currency) =>
         set((state) => ({
           currencies: state.currencies.map((c) =>
-            c.assetId === currency.assetId ? currency : c,
+            c.id === currency.id ? currency : c,
           ),
         })),
-      removeCurrency: (assetId) =>
+      removeCurrency: (id) =>
         set((state) => ({
           currencies: state.currencies.filter(
-            (currency) => currency.assetId !== assetId,
+            (currency) => currency.id !== id,
           ),
         })),
     }),
