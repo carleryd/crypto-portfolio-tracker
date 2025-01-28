@@ -1,4 +1,4 @@
-import { FetchedCurrency } from "../currencyRequests";
+import { FetchedCurrency } from "../requests/currency";
 
 export const getCurrencySummary = (currency: FetchedCurrency) =>
   `${currency.name} (${currency.symbol})`;

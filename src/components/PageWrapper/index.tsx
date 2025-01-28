@@ -22,12 +22,18 @@ export const PageWrapper = ({ children }: Props) => (
         }}
         paddingY={4}
         spacing={5}
-        direction="column"
-        alignItems="center"
       >
-        <Box borderRadius={8} bgcolor="white" padding={2}>
+        <Grid
+          container
+          direction="column"
+          alignItems="center"
+          borderRadius={8}
+          bgcolor="white"
+          padding={2}
+          width="100%"
+        >
           {children}
-        </Box>
+        </Grid>
       </Grid>
     </Container>
   </Box>

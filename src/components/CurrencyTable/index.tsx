@@ -1,16 +1,13 @@
 import {
   Box,
-  CircularProgress,
-  Grid2 as Grid,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
-import { FC, useState } from "react";
+import { FC } from "react";
 
 import { formatAssetAmount } from "@/utils/index";
 
@@ -30,72 +27,51 @@ type Props = {
   onClickTableRow: (currency: Currency) => void;
 };
 
-export const CurrencyTable: FC<Props> = ({ currencies, onClickTableRow }) => {
-  const [isFetching] = useState(false);
-
-  return (
-    <Box>
-      <Grid container justifyContent="center" alignItems="center">
-        <Grid container>
-          <Grid marginTop={1.5} marginBottom={3}>
-            <Typography variant="h3">Portfolio</Typography>
-          </Grid>
-        </Grid>
-        <Grid container paddingRight={1}>
-          <CircularProgress
-            size={25}
-            sx={{
-              visibility: isFetching ? "visible" : "hidden",
-            }}
-          />
-        </Grid>
-      </Grid>
-      <TableContainer>
-        <Table>
-          <TableHead>
+export const CurrencyTable: FC<Props> = ({ currencies, onClickTableRow }) => (
+  <Box>
+    <TableContainer>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell align="right">Symbol</TableCell>
+            <TableCell align="right">Quantity</TableCell>
+            <TableCell align="right">Price</TableCell>
+            <TableCell align="right">Total Value</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {currencies.length === 0 ? (
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">Symbol</TableCell>
-              <TableCell align="right">Quantity</TableCell>
-              <TableCell align="right">Price</TableCell>
-              <TableCell align="right">Total Value</TableCell>
+              <TableCell colSpan={3} align="center">
+                No currencies
+              </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {currencies.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={3} align="center">
-                  No currencies
-                </TableCell>
+          ) : (
+            currencies.map((currency, index) => (
+              <TableRow
+                component="tr"
+                key={index}
+                hover={true}
+                onClick={() => onClickTableRow(currency)}
+                style={{ cursor: "pointer" }}
+              >
+                <TableCell>{currency.name}</TableCell>
+                <TableCell>{currency.symbol}</TableCell>
+                <HoverableTableCell label={currency.quantity.toString()} />
+                <HoverableTableCell label={currency.price?.toString() || "-"} />
+                <HoverableTableCell
+                  label={
+                    currency.totalValue
+                      ? formatAssetAmount(currency.totalValue)
+                      : "-"
+                  }
+                />
               </TableRow>
-            ) : (
-              currencies.map((currency, index) => (
-                <TableRow
-                  component="tr"
-                  key={index}
-                  hover={true}
-                  onClick={() => onClickTableRow(currency)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <TableCell>{currency.name}</TableCell>
-                  <TableCell>{currency.symbol}</TableCell>
-                  <HoverableTableCell label={currency.quantity.toString()} />
-                  <HoverableTableCell
-                    label={currency.price?.toString() || "-"}
-                  />
-                  <HoverableTableCell
-                    label={
-                      currency.totalValue
-                        ? formatAssetAmount(currency.totalValue)
-                        : "-"
-                    }
-                  />
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
-  );
-};
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </Box>
+);

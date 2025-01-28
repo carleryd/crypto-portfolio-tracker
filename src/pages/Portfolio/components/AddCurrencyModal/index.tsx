@@ -10,7 +10,7 @@ import { debounce } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
-import { FetchedCurrency, searchCurrencies } from "@/currencyRequests";
+import { FetchedCurrency, searchCurrencies } from "@/requests/currency";
 import { getCurrencySummary } from "@/utils/index";
 
 const validNumberSchema = z.string().regex(/^[0-9]+\.[0-9]+$/);

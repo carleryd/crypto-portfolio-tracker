@@ -4,15 +4,15 @@ import { z } from "zod";
 const COINGECKO_BASE_API = "https://api.coingecko.com/api/v3";
 const COINGECKO_SIMPLE_API = `${COINGECKO_BASE_API}/simple`;
 
+/**
+ * All API requests and schemas are based on the Coingecko API (Demo plan).
+ * See https://docs.coingecko.com/v3.0.1
+ */
 const getApiUrl = (apiUrl: string) => (path: string) =>
   `${apiUrl}${path}&x_cg_demo_api_key=${import.meta.env.VITE_COINGECKO_TOKEN}`;
 const getBaseApi = getApiUrl(COINGECKO_BASE_API);
 const getSimpleApi = getApiUrl(COINGECKO_SIMPLE_API);
 
-/**
- * Based on schema source for Coingecko API responses:
- * https://docs.coingecko.com/v3.0.1/reference/search-data
- */
 const coinGeckoSearchSchema = z.object({
   coins: z.array(
     z.object({
@@ -29,18 +29,6 @@ const coinGeckoSearchSchema = z.object({
 
 export type CurrencySearchResponse = z.infer<typeof coinGeckoSearchSchema>;
 export type FetchedCurrency = CurrencySearchResponse["coins"][0];
-
-const coinGeckoPriceUsdSchema = z.record(
-  z.object({
-    usd: z.number().positive(),
-    usd_market_usd: z.number().optional(),
-    usd_24h_usd: z.number().optional(),
-    usd_24h_changusd: z.number().optional(),
-    last_updatedusd: z.number().positive().optional(),
-  }),
-);
-
-export type CurrencyPriceUsdResponse = z.infer<typeof coinGeckoPriceUsdSchema>;
 
 // TODO: Rename
 export const searchCurrencies = async (
@@ -71,6 +59,18 @@ export const searchCurrencies = async (
   return parsedResponse.data;
 };
 
+const coinGeckoPriceUsdSchema = z.record(
+  z.object({
+    usd: z.number().positive(),
+    usd_market_usd: z.number().optional(),
+    usd_24h_usd: z.number().optional(),
+    usd_24h_changusd: z.number().optional(),
+    last_updatedusd: z.number().positive().optional(),
+  }),
+);
+
+export type CurrencyPriceUsdResponse = z.infer<typeof coinGeckoPriceUsdSchema>;
+
 export const fetchCurrencyPriceUsd = async (
   currencyIds: string[],
 ): Promise<CurrencyPriceUsdResponse> => {
@@ -89,6 +89,47 @@ export const fetchCurrencyPriceUsd = async (
   const data = await response.json();
 
   const parsedResponse = coinGeckoPriceUsdSchema.safeParse(data);
+
+  if (!parsedResponse.success) {
+    throw new Error(
+      `Failed to parse search response: ${parsedResponse.error.message}`,
+    );
+  }
+
+  return parsedResponse.data;
+};
+
+const coinGeckoHistoricalPriceUsdSchema = z.object({
+  prices: z.array(z.tuple([z.number(), z.number()])),
+});
+
+export type CurrencyHistoricalPriceUsdResponse = z.infer<
+  typeof coinGeckoHistoricalPriceUsdSchema
+>;
+
+export const fetchCurrencyHistoricalPriceDataUsd = async (
+  currencyId: string,
+  days: number,
+  interval?: "daily",
+): Promise<CurrencyHistoricalPriceUsdResponse> => {
+  const path =
+    `/coins/${currencyId}/market_chart?vs_currency=usd` +
+    `&days=${days}` +
+    `${interval ? `&interval=${interval}` : ""}`;
+
+  const url = getBaseApi(path);
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch transaction status: ${response.statusText}`,
+    );
+  }
+
+  const data = await response.json();
+
+  const parsedResponse = coinGeckoHistoricalPriceUsdSchema.safeParse(data);
 
   if (!parsedResponse.success) {
     throw new Error(

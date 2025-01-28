@@ -1,10 +1,10 @@
-import { Button, Grid2 as Grid, styled } from "@mui/material";
+import { Button, Grid2 as Grid, Typography, styled } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { CurrencyTable } from "@/components/CurrencyTable";
-import { FetchedCurrency, fetchCurrencyPriceUsd } from "@/currencyRequests";
 import { StoredCurrency, useCurrencyStore } from "@/hooks/useCurrencyStore";
+import { FetchedCurrency, fetchCurrencyPriceUsd } from "@/requests/currency";
 
 import { AddCurrencyModal } from "./components/AddCurrencyModal";
 
@@ -87,6 +87,13 @@ export const Portfolio = () => {
 
   return (
     <>
+      <Grid container justifyContent="center" alignItems="center">
+        <Grid container>
+          <Grid marginTop={1.5} marginBottom={3}>
+            <Typography variant="h3">Portfolio</Typography>
+          </Grid>
+        </Grid>
+      </Grid>
       <CurrencyTable
         currencies={currencies.map(populateCurrencyTotalValue)}
         onClickTableRow={onClickTableRow}
