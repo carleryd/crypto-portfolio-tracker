@@ -99,9 +99,12 @@ export const fetchCurrencyPriceUsd = async (
   return parsedResponse.data;
 };
 
-const coinGeckoHistoricalPriceUsdSchema = z.object({
-  prices: z.array(z.tuple([z.number(), z.number()])),
-});
+/**
+ * Array of arrays of length 5: [time, open, high, low, close]
+ */
+const coinGeckoHistoricalPriceUsdSchema = z.array(
+  z.tuple([z.number(), z.number(), z.number(), z.number(), z.number()]),
+);
 
 export type CurrencyHistoricalPriceUsdResponse = z.infer<
   typeof coinGeckoHistoricalPriceUsdSchema
@@ -110,12 +113,8 @@ export type CurrencyHistoricalPriceUsdResponse = z.infer<
 export const fetchCurrencyHistoricalPriceDataUsd = async (
   currencyId: string,
   days: number,
-  interval?: "daily",
 ): Promise<CurrencyHistoricalPriceUsdResponse> => {
-  const path =
-    `/coins/${currencyId}/market_chart?vs_currency=usd` +
-    `&days=${days}` +
-    `${interval ? `&interval=${interval}` : ""}`;
+  const path = `/coins/${currencyId}/ohlc?vs_currency=usd` + `&days=${days}`;
 
   const url = getBaseApi(path);
 

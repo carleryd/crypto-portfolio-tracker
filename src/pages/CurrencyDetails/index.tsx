@@ -1,23 +1,34 @@
 import { CircularProgress, Grid2 as Grid, Typography } from "@mui/material";
 import { format } from "date-fns";
+import { uniqBy } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
 import { ROUTES, useTypedParams } from "@/constants";
 import { StoredCurrency, useCurrencyStore } from "@/hooks/useCurrencyStore";
-import { fetchCurrencyHistoricalPriceDataUsd } from "@/requests/currency";
+import {
+  CurrencyHistoricalPriceUsdResponse,
+  fetchCurrencyHistoricalPriceDataUsd,
+} from "@/requests/currency";
 
 import {
-  HistoricalPriceChart,
+  CandlestickChart,
   TimeSeriesEntry,
-} from "./components/HistoricalPriceChart";
+} from "./components/CandlestickChart";
 
-const convertData = (data: number[][]): TimeSeriesEntry[] => {
-  const converted = data.map(([time, value]) => ({
+const convertData = (
+  data: CurrencyHistoricalPriceUsdResponse,
+): TimeSeriesEntry[] => {
+  const converted = data.map(([time, open, high, low, close]) => ({
     time: format(new Date(time), "yyyy-MM-dd"),
-    value,
+    open,
+    high,
+    low,
+    close,
   }));
 
-  return converted.splice(0, converted.length - 2);
+  const uniqueDates = uniqBy(converted, ({ time }) => time);
+
+  return uniqueDates;
 };
 
 export const CurrencyDetails = () => {
@@ -29,13 +40,9 @@ export const CurrencyDetails = () => {
 
   const fetchAndPrepareTimeSeriesData = useCallback(async () => {
     if (currencyId) {
-      const data = await fetchCurrencyHistoricalPriceDataUsd(
-        currencyId,
-        90,
-        "daily",
-      );
+      const data = await fetchCurrencyHistoricalPriceDataUsd(currencyId, 365);
 
-      const convertedData: TimeSeriesEntry[] = convertData(data.prices);
+      const convertedData: TimeSeriesEntry[] = convertData(data);
 
       setTimeSeries(convertedData);
     }
@@ -78,7 +85,7 @@ export const CurrencyDetails = () => {
           </Grid>
         </Grid>
       </Grid>
-      <HistoricalPriceChart timeSeries={timeSeries} />
+      <CandlestickChart timeSeries={timeSeries} />
     </Grid>
   );
 };

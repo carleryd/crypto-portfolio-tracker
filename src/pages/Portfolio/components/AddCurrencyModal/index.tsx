@@ -13,7 +13,7 @@ import { z } from "zod";
 import { FetchedCurrency, searchCurrencies } from "@/requests/currency";
 import { getCurrencySummary } from "@/utils/index";
 
-const validNumberSchema = z.string().regex(/^[0-9]+\.[0-9]+$/);
+const validNumberSchema = z.string().regex(/\b\d+(\.\d+)?\b/);
 
 const positiveNumberSchema = z
   .string()
