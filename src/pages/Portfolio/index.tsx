@@ -1,5 +1,5 @@
 import { Button, Grid2 as Grid, Typography, styled } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { CurrencyTable } from "@/components/CurrencyTable";
@@ -30,31 +30,30 @@ const responseToStoredCurrency = (
 });
 
 export const Portfolio = () => {
-  const { addCurrency, currencies, editCurrency } = useCurrencyStore();
+  const { addCurrency, currencies, editCurrency, getCurrency } =
+    useCurrencyStore();
   const [isAddCurrencyModalOpen, setIsAddCurrencyModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const updateCurrencyPrices = useCallback(
-    async (currencies: StoredCurrency[]) => {
-      const currencyIds = currencies.map((currency) => currency.id);
+    async (currencyIds: string[]) => {
       const currencyPriceMap = await fetchCurrencyPriceUsd(currencyIds);
 
-      currencies.forEach((currency) => {
-        const currentUsdPrice = currencyPriceMap[currency.id]?.usd;
+      currencyIds.forEach((currencyId) => {
+        const currentUsdPrice = currencyPriceMap[currencyId]?.usd;
+        const currency = getCurrency(currencyId);
 
-        if (currentUsdPrice) {
+        if (currentUsdPrice && currency) {
           const updatedCurrency = { ...currency, price: currentUsdPrice };
 
           editCurrency(updatedCurrency);
         }
       });
     },
-    [editCurrency],
+    [getCurrency, editCurrency],
   );
 
-  useEffect(() => {
-    updateCurrencyPrices(currencies);
-  }, [updateCurrencyPrices, currencies]);
+  // TODO: Interval should fetch prices perhaps?
 
   const onClickAddNewHolding = useCallback(() => {
     setIsAddCurrencyModalOpen(true);
@@ -65,16 +64,17 @@ export const Portfolio = () => {
   }, [setIsAddCurrencyModalOpen]);
 
   const onAddNewCurrency = useCallback(
-    (newCurrency: FetchedCurrency, quantity: number) => {
-      const asdf: StoredCurrency = responseToStoredCurrency(
-        newCurrency,
+    (fetchedCurrency: FetchedCurrency, quantity: number) => {
+      const newCurrency: StoredCurrency = responseToStoredCurrency(
+        fetchedCurrency,
         quantity,
       );
 
-      addCurrency(asdf);
+      addCurrency(newCurrency);
       setIsAddCurrencyModalOpen(false);
+      updateCurrencyPrices([newCurrency.id]);
     },
-    [addCurrency, setIsAddCurrencyModalOpen],
+    [addCurrency, setIsAddCurrencyModalOpen, updateCurrencyPrices],
   );
 
   const onClickTableRow = useCallback(

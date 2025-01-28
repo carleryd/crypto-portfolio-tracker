@@ -1,7 +1,14 @@
-import { CircularProgress, Grid2 as Grid, Typography } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import {
+  Button,
+  CircularProgress,
+  Grid2 as Grid,
+  Typography,
+} from "@mui/material";
 import { format } from "date-fns";
 import { uniqBy } from "lodash";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { ROUTES, useTypedParams } from "@/constants";
 import { StoredCurrency, useCurrencyStore } from "@/hooks/useCurrencyStore";
@@ -37,6 +44,7 @@ export const CurrencyDetails = () => {
   const { currencyId } = useTypedParams<typeof ROUTES.CURRENCY>();
   const [currency, setCurrency] = useState<StoredCurrency | null>(null);
   const [timeSeries, setTimeSeries] = useState<TimeSeriesEntry[]>([]);
+  const navigate = useNavigate();
 
   const fetchAndPrepareTimeSeriesData = useCallback(async () => {
     if (currencyId) {
@@ -71,6 +79,9 @@ export const CurrencyDetails = () => {
 
   return (
     <Grid>
+      <Button onClick={() => navigate(ROUTES.HOME)}>
+        <ArrowBackIcon />
+      </Button>
       <Grid container justifyContent="center" alignItems="center">
         <Grid container>
           <Grid marginTop={1.5} marginBottom={3}>
