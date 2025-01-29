@@ -39,6 +39,7 @@ export const Portfolio = () => {
 
   const updateCurrencyPrices = useCallback(
     async (currencyIds: string[]) => {
+      // TODO: Use RemoteData
       const currencyPriceMap = await fetchCurrencyPriceUsd(currencyIds);
 
       currencyIds.forEach((currencyId) => {

@@ -9,7 +9,7 @@ export const PageWrapper = ({ children }: Props) => (
     minHeight="100vh"
     minWidth="100vw"
     sx={{
-      backgroundColor: "primary.main",
+      backgroundColor: "background.default",
     }}
   >
     <Container maxWidth="lg">
@@ -31,6 +31,9 @@ export const PageWrapper = ({ children }: Props) => (
           bgcolor="white"
           padding={2}
           width="100%"
+          sx={{
+            backgroundColor: "background.paper",
+          }}
         >
           {children}
         </Grid>
