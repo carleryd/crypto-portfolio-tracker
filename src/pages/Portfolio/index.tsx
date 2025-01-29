@@ -7,6 +7,7 @@ import { StoredCurrency, useCurrencyStore } from "@/hooks/useCurrencyStore";
 import { FetchedCurrency, fetchCurrencyPriceUsd } from "@/requests/currency";
 
 import { AddCurrencyModal } from "./components/AddCurrencyModal";
+import { EditCurrencyModal } from "./components/EditCurrencyModal";
 
 export const Stuff = styled(Grid)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -33,6 +34,10 @@ export const Portfolio = () => {
   const { addCurrency, currencies, editCurrency, getCurrency } =
     useCurrencyStore();
   const [isAddCurrencyModalOpen, setIsAddCurrencyModalOpen] = useState(false);
+  const [isEditCurrencyModalOpen, setIsEditCurrencyModalOpen] = useState(false);
+  const [currencyToEdit, setCurrencyToEdit] = useState<StoredCurrency | null>(
+    null,
+  );
   const navigate = useNavigate();
 
   const updateCurrencyPrices = useCallback(
@@ -60,8 +65,13 @@ export const Portfolio = () => {
   }, [setIsAddCurrencyModalOpen]);
 
   const onCloseAddCurrencyModal = useCallback(() => {
+    setCurrencyToEdit(null);
     setIsAddCurrencyModalOpen(false);
   }, [setIsAddCurrencyModalOpen]);
+
+  const onCloseEditCurrencyModal = useCallback(() => {
+    setIsEditCurrencyModalOpen(false);
+  }, [setIsEditCurrencyModalOpen]);
 
   const onAddNewCurrency = useCallback(
     (fetchedCurrency: FetchedCurrency, quantity: number) => {
@@ -77,12 +87,39 @@ export const Portfolio = () => {
     [addCurrency, setIsAddCurrencyModalOpen, updateCurrencyPrices],
   );
 
-  const onClickTableRow = useCallback(
+  const onEditCurrency = useCallback(
+    (currencyId: string, quantity: number) => {
+      const newCurrency = getCurrency(currencyId);
+
+      if (newCurrency) {
+        editCurrency({ ...newCurrency, quantity });
+      }
+
+      setIsEditCurrencyModalOpen(false);
+      updateCurrencyPrices([currencyId]);
+    },
+    [
+      getCurrency,
+      editCurrency,
+      setIsEditCurrencyModalOpen,
+      updateCurrencyPrices,
+    ],
+  );
+
+  const onSelectCurrency = useCallback(
     (currency: { id: string }) => {
-      console.log(currency);
       navigate(`/currency/${currency.id}`);
     },
     [navigate],
+  );
+
+  const onSelectEditCurrency = useCallback(
+    ({ id }: { id: string }) => {
+      const currency = getCurrency(id);
+      setCurrencyToEdit(currency);
+      setIsEditCurrencyModalOpen(true);
+    },
+    [getCurrency],
   );
 
   return (
@@ -96,7 +133,8 @@ export const Portfolio = () => {
       </Grid>
       <CurrencyTable
         currencies={currencies.map(populateCurrencyTotalValue)}
-        onClickTableRow={onClickTableRow}
+        onSelectCurrency={onSelectCurrency}
+        onSelectEditCurrency={onSelectEditCurrency}
       />
       <Button onClick={onClickAddNewHolding}>Add new holding</Button>
       <AddCurrencyModal
@@ -104,6 +142,16 @@ export const Portfolio = () => {
         onClose={onCloseAddCurrencyModal}
         onAddNewCurrency={onAddNewCurrency}
       />
+      {
+        /** TODO: This could be improved */ currencyToEdit && (
+          <EditCurrencyModal
+            open={isEditCurrencyModalOpen}
+            currency={currencyToEdit}
+            onClose={onCloseEditCurrencyModal}
+            onEditCurrency={onEditCurrency}
+          />
+        )
+      }
     </>
   );
 };

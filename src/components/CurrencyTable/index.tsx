@@ -1,5 +1,8 @@
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
+  Button,
+  Grid2 as Grid,
   Table,
   TableBody,
   TableCell,
@@ -7,7 +10,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { FC } from "react";
+import { FC, useCallback } from "react";
 
 import { formatAssetAmount } from "@/utils/index";
 
@@ -24,54 +27,83 @@ type Currency = {
 
 type Props = {
   currencies: Currency[];
-  onClickTableRow: (currency: Currency) => void;
+  onSelectCurrency: (currency: Currency) => void;
+  onSelectEditCurrency: (currency: Currency) => void;
 };
 
-export const CurrencyTable: FC<Props> = ({ currencies, onClickTableRow }) => (
-  <Box>
-    <TableContainer>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell align="right">Symbol</TableCell>
-            <TableCell align="right">Quantity</TableCell>
-            <TableCell align="right">Price</TableCell>
-            <TableCell align="right">Total Value</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {currencies.length === 0 ? (
+export const CurrencyTable: FC<Props> = ({
+  currencies,
+  onSelectCurrency,
+  onSelectEditCurrency,
+}) => {
+  const onClickEditCurrency = useCallback(
+    (event: React.MouseEvent, currency: Currency) => {
+      event.stopPropagation();
+      onSelectEditCurrency(currency);
+    },
+    [onSelectEditCurrency],
+  );
+
+  return (
+    <Box>
+      <TableContainer>
+        <Table>
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={3} align="center">
-                No currencies
-              </TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Symbol</TableCell>
+              <TableCell>Quantity</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Total Value</TableCell>
+              <TableCell align="right">Edit</TableCell>
             </TableRow>
-          ) : (
-            currencies.map((currency, index) => (
-              <TableRow
-                component="tr"
-                key={index}
-                hover={true}
-                onClick={() => onClickTableRow(currency)}
-                style={{ cursor: "pointer" }}
-              >
-                <TableCell>{currency.name}</TableCell>
-                <TableCell>{currency.symbol}</TableCell>
-                <HoverableTableCell label={currency.quantity.toString()} />
-                <HoverableTableCell label={currency.price?.toString() || "-"} />
-                <HoverableTableCell
-                  label={
-                    currency.totalValue
-                      ? formatAssetAmount(currency.totalValue)
-                      : "-"
-                  }
-                />
+          </TableHead>
+          <TableBody>
+            {currencies.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  No currencies
+                </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  </Box>
-);
+            ) : (
+              currencies.map((currency, index) => (
+                <>
+                  <TableRow
+                    component="tr"
+                    key={index}
+                    hover={true}
+                    onClick={() => onSelectCurrency(currency)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <TableCell>{currency.name}</TableCell>
+                    <TableCell>{currency.symbol}</TableCell>
+                    <HoverableTableCell label={currency.quantity.toString()} />
+                    <HoverableTableCell
+                      label={currency.price?.toString() || "-"}
+                    />
+                    <HoverableTableCell
+                      label={
+                        currency.totalValue
+                          ? formatAssetAmount(currency.totalValue)
+                          : "-"
+                      }
+                    />
+                    <TableCell>
+                      <Button
+                        onClick={(event) =>
+                          onClickEditCurrency(event, currency)
+                        }
+                      >
+                        <EditIcon />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  );
+};
