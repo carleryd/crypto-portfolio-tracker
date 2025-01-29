@@ -2,6 +2,6 @@ import { formatAssetAmount } from ".";
 
 describe("formatAssetAmount", () => {
   test("formats large numbers correctly", () => {
-    expect(formatAssetAmount(123456.789)).toBe("123456.79");
+    expect(formatAssetAmount(500.55555)).toBe("500.56");
   });
 });

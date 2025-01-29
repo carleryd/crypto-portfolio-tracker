@@ -1,7 +1,6 @@
 import {
   Autocomplete,
   Button,
-  Dialog,
   Grid2 as Grid,
   Input,
   TextField,
@@ -25,12 +24,10 @@ const positiveNumberSchema = z
   });
 
 type Props = {
-  open: boolean;
-  onClose: () => void;
   onAddNewCurrency: (newCurrency: FetchedCurrency, quantity: number) => void;
 };
 
-export const AddCurrencyModal = (props: Props) => {
+export const AddCurrency = (props: Props) => {
   const [currencyQuantity, setCurrencyQuantity] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [currencyOptions, setCurrencyOptions] = useState<FetchedCurrency[]>([]);
@@ -106,39 +103,37 @@ export const AddCurrencyModal = (props: Props) => {
   };
 
   return (
-    <Dialog open={props.open} onClose={props.onClose}>
-      <Grid
-        container
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="space-between"
-        minWidth={400}
-        minHeight="60vh"
-      >
-        <Grid padding={2} minWidth={200}>
-          <Autocomplete
-            value={selectedOption}
-            filterOptions={(x) => x}
-            onChange={onChange}
-            onInputChange={onInputChange}
-            options={currencyOptions}
-            getOptionLabel={getCurrencySummary}
-            renderInput={(params) => (
-              <TextField {...params} label="Cryptocurrency" />
-            )}
-          />
-        </Grid>
-        <Grid padding={2}>
-          <Input
-            value={currencyQuantity}
-            placeholder="Amount"
-            onChange={onChangeCurrencyQuantity}
-          />
-        </Grid>
-        <Grid padding={2}>
-          <Button onClick={onClickAddCurrency}>Add currency</Button>
-        </Grid>
+    <Grid
+      container
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="space-between"
+      minWidth={400}
+      minHeight="60vh"
+    >
+      <Grid padding={2} minWidth={200}>
+        <Autocomplete
+          value={selectedOption}
+          filterOptions={(x) => x}
+          onChange={onChange}
+          onInputChange={onInputChange}
+          options={currencyOptions}
+          getOptionLabel={getCurrencySummary}
+          renderInput={(params) => (
+            <TextField {...params} label="Cryptocurrency" />
+          )}
+        />
       </Grid>
-    </Dialog>
+      <Grid padding={2}>
+        <Input
+          value={currencyQuantity}
+          placeholder="Amount"
+          onChange={onChangeCurrencyQuantity}
+        />
+      </Grid>
+      <Grid padding={2}>
+        <Button onClick={onClickAddCurrency}>Add currency</Button>
+      </Grid>
+    </Grid>
   );
 };

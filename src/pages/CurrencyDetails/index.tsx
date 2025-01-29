@@ -61,8 +61,6 @@ export const CurrencyDetails = () => {
     }
   }, [currencyId, getCurrency]);
 
-  // TODO: Ensure loading spinner is same height as content
-
   return (
     <Grid>
       <Button onClick={() => navigate(ROUTES.HOME)}>

@@ -1,4 +1,4 @@
-import { Button, Dialog, Grid2 as Grid, Input } from "@mui/material";
+import { Button, Grid2 as Grid, Input } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
@@ -17,12 +17,10 @@ const positiveNumberSchema = z
 
 type Props = {
   currency: StoredCurrency;
-  open: boolean;
-  onClose: () => void;
-  onEditCurrency: (currencyId: string, quantity: number) => void;
+  onEditCurrency: (quantity: number) => void;
 };
 
-export const EditCurrencyModal = (props: Props) => {
+export const EditCurrency = (props: Props) => {
   const [currencyQuantity, setCurrencyQuantity] = useState(
     props.currency.quantity,
   );
@@ -55,30 +53,28 @@ export const EditCurrencyModal = (props: Props) => {
       return;
     }
 
-    props.onEditCurrency(props.currency.id, currencyQuantity);
+    props.onEditCurrency(currencyQuantity);
   }, [props, currencyQuantity]);
 
   return (
-    <Dialog open={props.open} onClose={props.onClose}>
-      <Grid
-        container
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="space-between"
-        minWidth={400}
-        minHeight="60vh"
-      >
-        <Grid padding={2}>
-          <Input
-            value={currencyQuantity}
-            placeholder="Amount"
-            onChange={onChangeCurrencyQuantity}
-          />
-        </Grid>
-        <Grid padding={2}>
-          <Button onClick={onClickEditCurrency}>Edit currency</Button>
-        </Grid>
+    <Grid
+      container
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="space-between"
+      minWidth={400}
+      minHeight="60vh"
+    >
+      <Grid padding={2}>
+        <Input
+          value={currencyQuantity}
+          placeholder="Amount"
+          onChange={onChangeCurrencyQuantity}
+        />
       </Grid>
-    </Dialog>
+      <Grid padding={2}>
+        <Button onClick={onClickEditCurrency}>Edit currency</Button>
+      </Grid>
+    </Grid>
   );
 };

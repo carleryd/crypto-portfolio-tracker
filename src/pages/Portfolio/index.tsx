@@ -1,5 +1,5 @@
 import { Button, Grid2 as Grid, Typography, styled } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { CurrencyTable } from "@/components/CurrencyTable";
@@ -7,8 +7,8 @@ import { FetchedCurrency, fetchCurrencyPriceUsd } from "@/requests/currency";
 import { StoredCurrency, useCurrencyStore } from "@/stores/useCurrencyStore";
 import { useModalStore } from "@/stores/useModalStore";
 
-import { AddCurrencyModal } from "./components/AddCurrencyModal";
-import { EditCurrencyModal } from "./components/EditCurrencyModal";
+import { AddCurrency } from "./components/AddCurrency";
+import { EditCurrency } from "./components/EditCurrency";
 
 export const Stuff = styled(Grid)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -34,12 +34,7 @@ const responseToStoredCurrency = (
 export const Portfolio = () => {
   const { addCurrency, currencies, editCurrency, getCurrency } =
     useCurrencyStore();
-  const { open: openModal } = useModalStore();
-  const [isAddCurrencyModalOpen, setIsAddCurrencyModalOpen] = useState(false);
-  const [isEditCurrencyModalOpen, setIsEditCurrencyModalOpen] = useState(false);
-  const [currencyToEdit, setCurrencyToEdit] = useState<StoredCurrency | null>(
-    null,
-  );
+  const { open: openModal, close: closeModal } = useModalStore();
   const navigate = useNavigate();
 
   const updateCurrencyPrices = useCallback(
@@ -63,50 +58,22 @@ export const Portfolio = () => {
   // TODO: Interval should fetch prices perhaps?
 
   const onClickAddNewHolding = useCallback(() => {
-    setIsAddCurrencyModalOpen(true);
-  }, [setIsAddCurrencyModalOpen]);
-
-  const onCloseAddCurrencyModal = useCallback(() => {
-    setCurrencyToEdit(null);
-    setIsAddCurrencyModalOpen(false);
-  }, [setIsAddCurrencyModalOpen]);
-
-  const onCloseEditCurrencyModal = useCallback(() => {
-    setIsEditCurrencyModalOpen(false);
-  }, [setIsEditCurrencyModalOpen]);
-
-  const onAddNewCurrency = useCallback(
-    (fetchedCurrency: FetchedCurrency, quantity: number) => {
+    const onAddNewCurrency = (
+      fetchedCurrency: FetchedCurrency,
+      quantity: number,
+    ) => {
       const newCurrency: StoredCurrency = responseToStoredCurrency(
         fetchedCurrency,
         quantity,
       );
 
       addCurrency(newCurrency);
-      setIsAddCurrencyModalOpen(false);
       updateCurrencyPrices([newCurrency.id]);
-    },
-    [addCurrency, setIsAddCurrencyModalOpen, updateCurrencyPrices],
-  );
+      closeModal();
+    };
 
-  const onEditCurrency = useCallback(
-    (currencyId: string, quantity: number) => {
-      const newCurrency = getCurrency(currencyId);
-
-      if (newCurrency) {
-        editCurrency({ ...newCurrency, quantity });
-      }
-
-      setIsEditCurrencyModalOpen(false);
-      updateCurrencyPrices([currencyId]);
-    },
-    [
-      getCurrency,
-      editCurrency,
-      setIsEditCurrencyModalOpen,
-      updateCurrencyPrices,
-    ],
-  );
+    openModal(() => <AddCurrency onAddNewCurrency={onAddNewCurrency} />);
+  }, [closeModal, openModal, addCurrency, updateCurrencyPrices]);
 
   const onSelectCurrency = useCallback(
     (currency: { id: string }) => {
@@ -117,13 +84,21 @@ export const Portfolio = () => {
 
   const onSelectEditCurrency = useCallback(
     ({ id }: { id: string }) => {
-      // const currency = getCurrency(id);
-      // setCurrencyToEdit(currency);
-      // setIsEditCurrencyModalOpen(true);
+      const currency = getCurrency(id);
 
-      openModal("Edit currency?");
+      if (currency) {
+        const onEditCurrency = (quantity: number) => {
+          editCurrency({ ...currency, quantity });
+          updateCurrencyPrices([id]);
+          closeModal();
+        };
+
+        openModal(() => (
+          <EditCurrency currency={currency} onEditCurrency={onEditCurrency} />
+        ));
+      }
     },
-    [getCurrency, openModal],
+    [getCurrency, openModal, closeModal, editCurrency, updateCurrencyPrices],
   );
 
   return (
@@ -141,21 +116,6 @@ export const Portfolio = () => {
         onSelectEditCurrency={onSelectEditCurrency}
       />
       <Button onClick={onClickAddNewHolding}>Add new holding</Button>
-      <AddCurrencyModal
-        open={isAddCurrencyModalOpen}
-        onClose={onCloseAddCurrencyModal}
-        onAddNewCurrency={onAddNewCurrency}
-      />
-      {
-        /** TODO: This could be improved */ currencyToEdit && (
-          <EditCurrencyModal
-            open={isEditCurrencyModalOpen}
-            currency={currencyToEdit}
-            onClose={onCloseEditCurrencyModal}
-            onEditCurrency={onEditCurrency}
-          />
-        )
-      }
     </>
   );
 };
