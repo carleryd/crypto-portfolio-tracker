@@ -2,7 +2,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Button,
-  Grid2 as Grid,
   Table,
   TableBody,
   TableCell,
@@ -55,7 +54,7 @@ export const CurrencyTable: FC<Props> = ({
               <TableCell>Quantity</TableCell>
               <TableCell>Price</TableCell>
               <TableCell>Total Value</TableCell>
-              <TableCell align="right">Edit</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

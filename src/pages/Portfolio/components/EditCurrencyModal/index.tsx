@@ -2,7 +2,7 @@ import { Button, Dialog, Grid2 as Grid, Input } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
-import { StoredCurrency } from "@/hooks/useCurrencyStore";
+import { StoredCurrency } from "@/stores/useCurrencyStore";
 
 const validNumberSchema = z.string().regex(/\b\d+(\.\d+)?\b/);
 

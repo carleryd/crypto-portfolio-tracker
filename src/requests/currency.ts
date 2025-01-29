@@ -102,18 +102,18 @@ export const fetchCurrencyPriceUsd = async (
 /**
  * Array of arrays of length 5: [time, open, high, low, close]
  */
-const coinGeckoHistoricalPriceUsdSchema = z.array(
+const coinGeckoHistoricalOhlcUsdSchema = z.array(
   z.tuple([z.number(), z.number(), z.number(), z.number(), z.number()]),
 );
 
-export type CurrencyHistoricalPriceUsdResponse = z.infer<
-  typeof coinGeckoHistoricalPriceUsdSchema
+export type CurrencyHistoricalOhlcUsdResponse = z.infer<
+  typeof coinGeckoHistoricalOhlcUsdSchema
 >;
 
 export const fetchCurrencyHistoricalPriceDataUsd = async (
   currencyId: string,
   days: number,
-): Promise<CurrencyHistoricalPriceUsdResponse> => {
+): Promise<CurrencyHistoricalOhlcUsdResponse> => {
   const path = `/coins/${currencyId}/ohlc?vs_currency=usd` + `&days=${days}`;
 
   const url = getBaseApi(path);
@@ -128,7 +128,7 @@ export const fetchCurrencyHistoricalPriceDataUsd = async (
 
   const data = await response.json();
 
-  const parsedResponse = coinGeckoHistoricalPriceUsdSchema.safeParse(data);
+  const parsedResponse = coinGeckoHistoricalOhlcUsdSchema.safeParse(data);
 
   if (!parsedResponse.success) {
     throw new Error(

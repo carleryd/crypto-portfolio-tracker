@@ -3,8 +3,9 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { CurrencyTable } from "@/components/CurrencyTable";
-import { StoredCurrency, useCurrencyStore } from "@/hooks/useCurrencyStore";
 import { FetchedCurrency, fetchCurrencyPriceUsd } from "@/requests/currency";
+import { StoredCurrency, useCurrencyStore } from "@/stores/useCurrencyStore";
+import { useModalStore } from "@/stores/useModalStore";
 
 import { AddCurrencyModal } from "./components/AddCurrencyModal";
 import { EditCurrencyModal } from "./components/EditCurrencyModal";
@@ -33,6 +34,7 @@ const responseToStoredCurrency = (
 export const Portfolio = () => {
   const { addCurrency, currencies, editCurrency, getCurrency } =
     useCurrencyStore();
+  const { open: openModal } = useModalStore();
   const [isAddCurrencyModalOpen, setIsAddCurrencyModalOpen] = useState(false);
   const [isEditCurrencyModalOpen, setIsEditCurrencyModalOpen] = useState(false);
   const [currencyToEdit, setCurrencyToEdit] = useState<StoredCurrency | null>(
@@ -115,11 +117,13 @@ export const Portfolio = () => {
 
   const onSelectEditCurrency = useCallback(
     ({ id }: { id: string }) => {
-      const currency = getCurrency(id);
-      setCurrencyToEdit(currency);
-      setIsEditCurrencyModalOpen(true);
+      // const currency = getCurrency(id);
+      // setCurrencyToEdit(currency);
+      // setIsEditCurrencyModalOpen(true);
+
+      openModal("Edit currency?");
     },
-    [getCurrency],
+    [getCurrency, openModal],
   );
 
   return (

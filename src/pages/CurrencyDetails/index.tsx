@@ -5,54 +5,40 @@ import {
   Grid2 as Grid,
   Typography,
 } from "@mui/material";
-import { format } from "date-fns";
-import { uniqBy } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { RemoteDataView } from "@/components/RemoteData";
 import { ROUTES, useTypedParams } from "@/constants";
-import { StoredCurrency, useCurrencyStore } from "@/hooks/useCurrencyStore";
-import {
-  CurrencyHistoricalPriceUsdResponse,
-  fetchCurrencyHistoricalPriceDataUsd,
-} from "@/requests/currency";
+import { fetchCurrencyHistoricalPriceDataUsd } from "@/requests/currency";
+import { RemoteData, remoteData } from "@/requests/utils/remoteData";
+import { StoredCurrency, useCurrencyStore } from "@/stores/useCurrencyStore";
 
 import {
   CandlestickChart,
-  TimeSeriesEntry,
-} from "./components/CandlestickChart";
-
-const convertData = (
-  data: CurrencyHistoricalPriceUsdResponse,
-): TimeSeriesEntry[] => {
-  const converted = data.map(([time, open, high, low, close]) => ({
-    time: format(new Date(time), "yyyy-MM-dd"),
-    open,
-    high,
-    low,
-    close,
-  }));
-
-  const uniqueDates = uniqBy(converted, ({ time }) => time);
-
-  return uniqueDates;
-};
+  CandlestickChartEntry,
+} from "../../components/CandlestickChart";
+import { CandleStickChartLoadding } from "../../components/CandlestickChart/components/Loading";
+import { prepareChartData } from "../../components/CandlestickChart/utils";
 
 export const CurrencyDetails = () => {
   // TODO: Improve interface
   const { getCurrency } = useCurrencyStore();
   const { currencyId } = useTypedParams<typeof ROUTES.CURRENCY>();
   const [currency, setCurrency] = useState<StoredCurrency | null>(null);
-  const [timeSeries, setTimeSeries] = useState<TimeSeriesEntry[]>([]);
+  const [timeSeries, setTimeSeries] = useState<
+    RemoteData<CandlestickChartEntry[]>
+  >(remoteData.notAsked);
   const navigate = useNavigate();
 
   const fetchAndPrepareTimeSeriesData = useCallback(async () => {
     if (currencyId) {
+      setTimeSeries(remoteData.pending);
       const data = await fetchCurrencyHistoricalPriceDataUsd(currencyId, 365);
 
-      const convertedData: TimeSeriesEntry[] = convertData(data);
+      const convertedData: CandlestickChartEntry[] = prepareChartData(data);
 
-      setTimeSeries(convertedData);
+      setTimeSeries(remoteData.success(convertedData));
     }
   }, [currencyId]);
 
@@ -96,7 +82,13 @@ export const CurrencyDetails = () => {
           </Grid>
         </Grid>
       </Grid>
-      <CandlestickChart timeSeries={timeSeries} />
+
+      <RemoteDataView
+        remoteData={timeSeries}
+        onSuccess={(data) => <CandlestickChart timeSeries={data} />}
+        onFailure={(error) => <Typography>{error.message}</Typography>}
+        onPending={() => <CandleStickChartLoadding />}
+      />
     </Grid>
   );
 };

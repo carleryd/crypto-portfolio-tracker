@@ -1,17 +1,12 @@
-import { createChart } from "lightweight-charts";
+import { CandlestickData, createChart } from "lightweight-charts";
 import { FC, useEffect, useRef } from "react";
 
-export type TimeSeriesEntry = {
-  // TODO: Could make number-number-number but would need validation
-  time: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-};
+import { CANDLESTICK_CHART_DIMENSIONS } from "./utils";
+
+export type CandlestickChartEntry = CandlestickData<string>;
 
 type Props = {
-  timeSeries: TimeSeriesEntry[];
+  timeSeries: CandlestickChartEntry[];
 };
 
 export const CandlestickChart: FC<Props> = ({ timeSeries }) => {
@@ -19,7 +14,8 @@ export const CandlestickChart: FC<Props> = ({ timeSeries }) => {
 
   useEffect(() => {
     if (ref.current && timeSeries) {
-      const chart = createChart(ref.current, { width: 600, height: 450 });
+      const { WIDTH, HEIGHT } = CANDLESTICK_CHART_DIMENSIONS;
+      const chart = createChart(ref.current, { width: WIDTH, height: HEIGHT });
       const series = chart.addCandlestickSeries();
       series.setData(timeSeries);
 
