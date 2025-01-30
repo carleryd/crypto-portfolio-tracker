@@ -45,9 +45,7 @@ export const EditCurrency = ({
     }
   };
 
-  // TODO: Prevent adding same currency twice
   const onClickEditCurrency = useCallback(() => {
-    // TODO: Add validation
     const validNumberResult = validNumberSchema.safeParse(
       String(currencyQuantity),
     );
@@ -61,7 +59,6 @@ export const EditCurrency = ({
   }, [onEditCurrency, currencyQuantity]);
 
   const onClickRemoveCurrency = useCallback(() => {
-    // TODO: Add confirmation
     onRemoveCurrency();
   }, [onRemoveCurrency]);
 

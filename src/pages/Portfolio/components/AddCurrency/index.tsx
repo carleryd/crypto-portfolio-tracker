@@ -66,12 +66,9 @@ export const AddCurrency = (props: Props) => {
     return () => debounced.cancel();
   }, [handleSearchInputChange, searchInput]);
 
-  // TODO: Prevent adding same currency twice
   const onClickAddCurrency = useCallback(() => {
-    // TODO: Add validation
     const validNumberResult = validNumberSchema.safeParse(currencyQuantity);
 
-    // TODO: Snackbar
     if (!selectedOption) {
       alert("No currency selected");
       return;

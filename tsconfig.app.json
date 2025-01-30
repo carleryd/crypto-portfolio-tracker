@@ -8,8 +8,6 @@
     // Faster building by storing composite type compliation output
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2020",
-    // TODO: Re-add if not available
-    // "lib": ["ES2020", "DOM", "DOM.Iterable"],
     // ES module resolution, required by Vite bundler
     "module": "ESNext",
     "skipLibCheck": true,

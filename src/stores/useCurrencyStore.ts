@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export type StoredCurrency = {
-  // TODO: Rename id?
   id: string;
   name: string;
   symbol: string;

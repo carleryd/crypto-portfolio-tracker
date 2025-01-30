@@ -12,7 +12,6 @@ import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import theme from "./theme";
 
-// TODO: Add navigation to home when error
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary

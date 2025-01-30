@@ -30,14 +30,12 @@ const coinGeckoSearchSchema = z.object({
 export type CurrencySearchResponse = z.infer<typeof coinGeckoSearchSchema>;
 export type FetchedCurrency = CurrencySearchResponse["coins"][0];
 
-// TODO: Rename
 export const searchCurrencies = async (
   searchTerm: string,
 ): Promise<CurrencySearchResponse> => {
   const path = `/search?query=${searchTerm}`;
   const url = getBaseApi(path);
 
-  // TODO: Use RemoteData?
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -77,7 +75,6 @@ export const fetchCurrencyPriceUsd = async (
   const path = `/price?ids=${join(currencyIds, ",")}&vs_currencies=usd`;
   const url = getSimpleApi(path);
 
-  // TODO: Use RemoteData?
   const response = await fetch(url);
 
   if (!response.ok) {

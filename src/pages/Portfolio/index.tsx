@@ -19,7 +19,6 @@ const populateCurrencyTotalValue = (currency: StoredCurrency) => ({
   totalValue: currency.price ? currency.quantity * currency.price : null,
 });
 
-// TODO: Rehome
 const responseToStoredCurrency = (
   currency: FetchedCurrency,
   quantity: number,
@@ -39,7 +38,6 @@ export const Portfolio = () => {
 
   const updateCurrencyPrices = useCallback(
     async (currencyIds: string[]) => {
-      // TODO: Use RemoteData
       const currencyPriceMap = await fetchCurrencyPriceUsd(currencyIds);
 
       currencyIds.forEach((currencyId) => {
@@ -55,8 +53,6 @@ export const Portfolio = () => {
     },
     [getCurrency, editCurrency],
   );
-
-  // TODO: Interval should fetch prices perhaps?
 
   const onClickAddNewHolding = useCallback(() => {
     const onAddNewCurrency = (
