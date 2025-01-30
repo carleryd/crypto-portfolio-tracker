@@ -1,35 +1,37 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
+  Box,
   Button,
   CircularProgress,
   Grid2 as Grid,
   Typography,
+  styled,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import {
+  CandlestickChart,
+  CandlestickChartEntry,
+} from "@/components/CandlestickChart";
+import { CandleStickChartLoadding } from "@/components/CandlestickChart/components/Loading";
+import { prepareChartData } from "@/components/CandlestickChart/utils";
 import { RemoteDataView } from "@/components/RemoteData";
 import { ROUTES, useTypedParams } from "@/constants";
 import { fetchCurrencyHistoricalPriceDataUsd } from "@/requests/currency";
 import { RemoteData, remoteData } from "@/requests/utils/remoteData";
 import { StoredCurrency, useCurrencyStore } from "@/stores/useCurrencyStore";
-
-import {
-  CandlestickChart,
-  CandlestickChartEntry,
-} from "../../components/CandlestickChart";
-import { CandleStickChartLoadding } from "../../components/CandlestickChart/components/Loading";
-import { prepareChartData } from "../../components/CandlestickChart/utils";
+import { formatCurrencyPrice, formatFinancial } from "@/utils";
 
 export const CurrencyDetails = () => {
-  // TODO: Improve interface
+  const navigate = useNavigate();
   const { getCurrency } = useCurrencyStore();
   const { currencyId } = useTypedParams<typeof ROUTES.CURRENCY>();
+
   const [currency, setCurrency] = useState<StoredCurrency | null>(null);
   const [timeSeries, setTimeSeries] = useState<
     RemoteData<CandlestickChartEntry[]>
   >(remoteData.notAsked);
-  const navigate = useNavigate();
 
   const fetchAndPrepareTimeSeriesData = useCallback(async () => {
     if (currencyId) {
@@ -47,37 +49,69 @@ export const CurrencyDetails = () => {
   }, [fetchAndPrepareTimeSeriesData, currencyId]);
 
   useEffect(() => {
-    if (currencyId) {
-      const currency = getCurrency(currencyId);
+    const currency = getCurrency(currencyId);
 
-      if (!currency) {
-        throw new Error("Currency not found in local storage");
-      }
-
-      setCurrency(currency);
-    } else {
-      // TODO: Can this be prevented higher up in the router?
-      throw new Error("Path did not contain currencyId");
+    if (!currency) {
+      throw new Error("Currency not found in local storage");
     }
+
+    setCurrency(currency);
   }, [currencyId, getCurrency]);
 
   return (
-    <Grid>
-      <Button onClick={() => navigate(ROUTES.HOME)}>
-        <ArrowBackIcon />
-      </Button>
-      <Grid container justifyContent="center" alignItems="center">
-        <Grid container>
+    <Grid container padding={3}>
+      <Grid>
+        <Grid>
+          <Button onClick={() => navigate(ROUTES.HOME)} size="large">
+            <ArrowBackIcon color="info" />
+          </Button>
+        </Grid>
+        <Grid container justifyContent="center" alignItems="center">
           <Grid marginTop={1.5} marginBottom={3}>
             {currency ? (
-              <>
-                <Typography color="background.default" variant="h3">
-                  {currency.name}
+              <Grid container flexDirection="column" padding={1} spacing={1.5}>
+                <Grid
+                  container
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="start"
+                  spacing={0}
+                >
+                  <Typography fontSize={20} fontWeight={600}>
+                    {currency.name}
+                  </Typography>
+                  <Typography fontSize={20} fontWeight={300} marginLeft={1}>
+                    {currency.symbol}
+                  </Typography>
+                </Grid>
+                <Typography fontSize={35} fontWeight={600}>
+                  {currency.price ? `$${formatFinancial(currency.price)}` : "-"}
                 </Typography>
-                <Typography color="background.default" variant="h4">
-                  {currency.symbol}
-                </Typography>
-              </>
+                <Grid>
+                  <Typography fontSize={16} fontWeight={600}>
+                    Holdings
+                  </Typography>
+                  <Typography fontSize={20} fontWeight={400}>
+                    {currency.price
+                      ? `$${formatFinancial(currency.price * currency.quantity)}`
+                      : "-"}
+                  </Typography>
+                  <Grid
+                    container
+                    flexDirection="row"
+                    alignItems="center"
+                    justifyContent="start"
+                    spacing={0}
+                  >
+                    <Typography fontSize={18} fontWeight={400}>
+                      {formatFinancial(currency.quantity)}
+                    </Typography>
+                    <Typography fontSize={18} fontWeight={300} marginLeft={1}>
+                      {currency.symbol}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
             ) : (
               <CircularProgress size={50} />
             )}
@@ -85,12 +119,14 @@ export const CurrencyDetails = () => {
         </Grid>
       </Grid>
 
-      <RemoteDataView
-        remoteData={timeSeries}
-        onSuccess={(data) => <CandlestickChart timeSeries={data} />}
-        onFailure={(error) => <Typography>{error.message}</Typography>}
-        onPending={() => <CandleStickChartLoadding />}
-      />
+      <Grid>
+        <RemoteDataView
+          remoteData={timeSeries}
+          onSuccess={(data) => <CandlestickChart timeSeries={data} />}
+          onFailure={(error) => <Typography>{error.message}</Typography>}
+          onPending={() => <CandleStickChartLoadding />}
+        />
+      </Grid>
     </Grid>
   );
 };

@@ -119,7 +119,13 @@ export const Portfolio = () => {
   );
 
   return (
-    <Grid container padding={2} justifyContent="center" alignItems="center">
+    <Grid
+      container
+      flexDirection="column"
+      padding={2}
+      justifyContent="center"
+      alignItems="center"
+    >
       <Grid marginBottom={3}>
         <Typography variant="h3">Portfolio</Typography>
       </Grid>

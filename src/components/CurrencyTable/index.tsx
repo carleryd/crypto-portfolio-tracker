@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { FC, useCallback } from "react";
 
-import { formatCurrencyAmount, formatCurrencyPrice } from "@/utils/index";
+import { formatFinancial } from "@/utils/index";
 
 import { HoverableTableCell } from "./components/TableCell";
 
@@ -99,14 +99,18 @@ export const CurrencyTable: FC<Props> = ({
                   </TableCell>
                   <HoverableTableCell
                     label={
-                      currency.price ? formatCurrencyPrice(currency.price) : "-"
+                      currency.price
+                        ? `$${formatFinancial(currency.price)}`
+                        : "-"
                     }
                   />
-                  <HoverableTableCell label={currency.quantity.toString()} />
+                  <HoverableTableCell
+                    label={formatFinancial(currency.quantity)}
+                  />
                   <HoverableTableCell
                     label={
                       currency.totalValue
-                        ? formatCurrencyAmount(currency.totalValue)
+                        ? `$${formatFinancial(currency.totalValue)}`
                         : "-"
                     }
                   />
@@ -114,7 +118,7 @@ export const CurrencyTable: FC<Props> = ({
                     <Button
                       onClick={(event) => onClickEditCurrency(event, currency)}
                     >
-                      <EditIcon />
+                      <EditIcon color="info" />
                     </Button>
                   </TableCell>
                 </TableRow>

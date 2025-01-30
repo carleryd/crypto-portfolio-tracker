@@ -1,4 +1,4 @@
-import { Box, Container, Grid2 as Grid } from "@mui/material";
+import { Box, Grid2 as Grid } from "@mui/material";
 
 type Props = {
   children: React.ReactNode;
@@ -12,32 +12,28 @@ export const PageWrapper = ({ children }: Props) => (
       backgroundColor: "background.default",
     }}
   >
-    <Container maxWidth="lg">
+    <Grid
+      container
+      alignItems="center"
+      justifyContent="center"
+      paddingX={{
+        xs: 1,
+        sm: 2,
+        md: 4,
+      }}
+      paddingY={4}
+      spacing={5}
+    >
       <Grid
         container
-        paddingX={{
-          xs: 1,
-          sm: 2,
-          md: 4,
-        }}
-        paddingY={4}
-        spacing={5}
+        direction="column"
+        alignItems="center"
+        borderRadius={8}
+        bgcolor="white"
+        padding={2}
       >
-        <Grid
-          container
-          direction="column"
-          alignItems="center"
-          borderRadius={8}
-          bgcolor="white"
-          padding={2}
-          width="100%"
-          sx={{
-            backgroundColor: "background.paper",
-          }}
-        >
-          {children}
-        </Grid>
+        {children}
       </Grid>
-    </Container>
+    </Grid>
   </Box>
 );

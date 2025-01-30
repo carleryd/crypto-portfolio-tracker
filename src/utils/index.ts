@@ -1,23 +1,18 @@
-import { FetchedCurrency } from "../requests/currency";
-
-const trimTrailingZeros = (numStr: string): string =>
-  numStr.includes(".") ? numStr.replace(/0+$/, "").replace(/\.$/, "") : numStr;
+import { FetchedCurrency } from "@/requests/currency";
 
 export const getCurrencySummary = (currency: FetchedCurrency) =>
   `${currency.name} (${currency.symbol})`;
 
-export const formatCurrencyAmount = (amount: number): string => {
-  const fixed = amount.toFixed(2);
+export const formatFinancial = (num: number): string => {
+  const options =
+    num < 1
+      ? {
+          maximumSignificantDigits: 5,
+        }
+      : {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 3,
+        };
 
-  const trimmed = trimTrailingZeros(fixed);
-
-  return `$${trimmed}`;
-};
-
-export const formatCurrencyPrice = (amount: number): string => {
-  const fixed = amount.toFixed(6);
-
-  const trimmed = trimTrailingZeros(fixed);
-
-  return `$${trimmed}`;
+  return new Intl.NumberFormat("en-US", options).format(num);
 };
