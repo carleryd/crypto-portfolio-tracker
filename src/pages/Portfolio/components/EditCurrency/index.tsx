@@ -1,5 +1,5 @@
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Button, Grid2 as Grid, Input } from "@mui/material";
+import { Button, Grid2 as Grid, Input, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
@@ -71,10 +71,11 @@ export const EditCurrency = ({
       flexDirection="column"
       alignItems="center"
       justifyContent="space-between"
-      minWidth={400}
-      minHeight="60vh"
     >
       <Grid padding={2}>
+        <Typography fontSize={14} fontWeight={600}>
+          Quantity
+        </Typography>
         <Input
           value={currencyQuantity}
           placeholder="Amount"

@@ -108,8 +108,6 @@ export const AddCurrency = (props: Props) => {
       flexDirection="column"
       alignItems="center"
       justifyContent="space-between"
-      minWidth={400}
-      minHeight="60vh"
     >
       <Grid padding={2} minWidth={200}>
         <Autocomplete

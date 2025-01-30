@@ -62,26 +62,22 @@ export const CurrencyTable: FC<Props> = ({
 
   return (
     <Box>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell>Price</TableHeaderCell>
-              <TableHeaderCell>Quantity</TableHeaderCell>
-              <TableHeaderCell>Holdings</TableHeaderCell>
-              <TableHeaderCell align="center">Edit</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {currencies.length === 0 ? (
+      {currencies.length === 0 ? (
+        <Typography variant="h5">No currencies added yet</Typography>
+      ) : (
+        <TableContainer>
+          <Table>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={3} align="center">
-                  No currencies
-                </TableCell>
+                <TableHeaderCell>Name</TableHeaderCell>
+                <TableHeaderCell>Price</TableHeaderCell>
+                <TableHeaderCell>Quantity</TableHeaderCell>
+                <TableHeaderCell>Holdings</TableHeaderCell>
+                <TableHeaderCell align="center">Edit</TableHeaderCell>
               </TableRow>
-            ) : (
-              currencies.map((currency, index) => (
+            </TableHead>
+            <TableBody>
+              {currencies.map((currency, index) => (
                 <TableRow
                   component="tr"
                   key={index}
@@ -122,11 +118,11 @@ export const CurrencyTable: FC<Props> = ({
                     </Button>
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
 };

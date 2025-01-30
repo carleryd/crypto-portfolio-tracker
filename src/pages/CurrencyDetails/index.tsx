@@ -1,11 +1,9 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
-  Box,
   Button,
   CircularProgress,
   Grid2 as Grid,
   Typography,
-  styled,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +19,7 @@ import { ROUTES, useTypedParams } from "@/constants";
 import { fetchCurrencyHistoricalPriceDataUsd } from "@/requests/currency";
 import { RemoteData, remoteData } from "@/requests/utils/remoteData";
 import { StoredCurrency, useCurrencyStore } from "@/stores/useCurrencyStore";
-import { formatCurrencyPrice, formatFinancial } from "@/utils";
+import { formatFinancial } from "@/utils";
 
 export const CurrencyDetails = () => {
   const navigate = useNavigate();
@@ -59,7 +57,7 @@ export const CurrencyDetails = () => {
   }, [currencyId, getCurrency]);
 
   return (
-    <Grid container padding={3}>
+    <Grid container padding={2.5} spacing={2.5}>
       <Grid>
         <Grid>
           <Button onClick={() => navigate(ROUTES.HOME)} size="large">
@@ -119,7 +117,7 @@ export const CurrencyDetails = () => {
         </Grid>
       </Grid>
 
-      <Grid>
+      <Grid paddingTop={2}>
         <RemoteDataView
           remoteData={timeSeries}
           onSuccess={(data) => <CandlestickChart timeSeries={data} />}

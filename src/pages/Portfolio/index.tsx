@@ -73,7 +73,9 @@ export const Portfolio = () => {
       closeModal();
     };
 
-    openModal(() => <AddCurrency onAddNewCurrency={onAddNewCurrency} />);
+    openModal("Add new holding", () => (
+      <AddCurrency onAddNewCurrency={onAddNewCurrency} />
+    ));
   }, [closeModal, openModal, addCurrency, updateCurrencyPrices]);
 
   const onSelectCurrency = useCallback(
@@ -99,7 +101,7 @@ export const Portfolio = () => {
           closeModal();
         };
 
-        openModal(() => (
+        openModal("Edit currency", () => (
           <EditCurrency
             currency={currency}
             onEditCurrency={onEditCurrency}
@@ -127,7 +129,7 @@ export const Portfolio = () => {
       alignItems="center"
     >
       <Grid marginBottom={3}>
-        <Typography variant="h3">Portfolio</Typography>
+        <Typography variant="h3">Crypto Portfolio Tracker</Typography>
       </Grid>
       <Grid padding={2}>
         <CurrencyTable
