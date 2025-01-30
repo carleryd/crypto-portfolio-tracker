@@ -6,7 +6,10 @@ https://carleryd.github.io/crypto-portfolio-tracker/
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies locally.
+2. Get a [Coingecko API token](https://www.coingecko.com/en/api). I recommend getting the demo token which is free.
+3. Create a `.env.local` copy of `.env` file in the root of the project and populate the Coingecko API token env variable.
+4. Run the app
 
 ```bash
 yarn dev
