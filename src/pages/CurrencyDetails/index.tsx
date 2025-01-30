@@ -71,8 +71,12 @@ export const CurrencyDetails = () => {
           <Grid marginTop={1.5} marginBottom={3}>
             {currency ? (
               <>
-                <Typography variant="h3">{currency.name}</Typography>
-                <Typography variant="h4">{currency.symbol}</Typography>
+                <Typography color="background.default" variant="h3">
+                  {currency.name}
+                </Typography>
+                <Typography color="background.default" variant="h4">
+                  {currency.symbol}
+                </Typography>
               </>
             ) : (
               <CircularProgress size={50} />

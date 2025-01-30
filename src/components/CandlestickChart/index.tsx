@@ -2,6 +2,8 @@ import { Box } from "@mui/material";
 import { CandlestickData, createChart } from "lightweight-charts";
 import { FC, useEffect, useRef } from "react";
 
+import { THEME_BACKGROUND } from "@/theme";
+
 import { CANDLESTICK_CHART_DIMENSIONS } from "./utils";
 
 export type CandlestickChartEntry = CandlestickData<string>;
@@ -22,11 +24,11 @@ export const CandlestickChart: FC<Props> = ({ timeSeries }) => {
 
         layout: {
           background: { color: "transparent" },
-          textColor: "#000000",
+          textColor: THEME_BACKGROUND.DEFAULT,
         },
         grid: {
-          vertLines: { color: "#000000" },
-          horzLines: { color: "#000000" },
+          vertLines: { color: THEME_BACKGROUND.DEFAULT },
+          horzLines: { color: THEME_BACKGROUND.DEFAULT },
         },
       });
       const series = chart.addCandlestickSeries();

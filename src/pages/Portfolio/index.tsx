@@ -32,7 +32,7 @@ const responseToStoredCurrency = (
 });
 
 export const Portfolio = () => {
-  const { addCurrency, currencies, editCurrency, getCurrency } =
+  const { addCurrency, currencies, editCurrency, removeCurrency, getCurrency } =
     useCurrencyStore();
   const { open: openModal, close: closeModal } = useModalStore();
   const navigate = useNavigate();
@@ -94,12 +94,28 @@ export const Portfolio = () => {
           closeModal();
         };
 
+        const onRemoveCurrency = () => {
+          removeCurrency(id);
+          closeModal();
+        };
+
         openModal(() => (
-          <EditCurrency currency={currency} onEditCurrency={onEditCurrency} />
+          <EditCurrency
+            currency={currency}
+            onEditCurrency={onEditCurrency}
+            onRemoveCurrency={onRemoveCurrency}
+          />
         ));
       }
     },
-    [getCurrency, openModal, closeModal, editCurrency, updateCurrencyPrices],
+    [
+      getCurrency,
+      openModal,
+      closeModal,
+      editCurrency,
+      removeCurrency,
+      updateCurrencyPrices,
+    ],
   );
 
   return (

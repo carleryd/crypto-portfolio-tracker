@@ -66,38 +66,34 @@ export const CurrencyTable: FC<Props> = ({
               </TableRow>
             ) : (
               currencies.map((currency, index) => (
-                <>
-                  <TableRow
-                    component="tr"
-                    key={index}
-                    hover={true}
-                    onClick={() => onSelectCurrency(currency)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <TableCell>{currency.name}</TableCell>
-                    <TableCell>{currency.symbol}</TableCell>
-                    <HoverableTableCell label={currency.quantity.toString()} />
-                    <HoverableTableCell
-                      label={currency.price?.toString() || "-"}
-                    />
-                    <HoverableTableCell
-                      label={
-                        currency.totalValue
-                          ? formatAssetAmount(currency.totalValue)
-                          : "-"
-                      }
-                    />
-                    <TableCell>
-                      <Button
-                        onClick={(event) =>
-                          onClickEditCurrency(event, currency)
-                        }
-                      >
-                        <EditIcon />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                </>
+                <TableRow
+                  component="tr"
+                  key={index}
+                  hover={true}
+                  onClick={() => onSelectCurrency(currency)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <TableCell>{currency.name}</TableCell>
+                  <TableCell>{currency.symbol}</TableCell>
+                  <HoverableTableCell label={currency.quantity.toString()} />
+                  <HoverableTableCell
+                    label={currency.price?.toString() || "-"}
+                  />
+                  <HoverableTableCell
+                    label={
+                      currency.totalValue
+                        ? formatAssetAmount(currency.totalValue)
+                        : "-"
+                    }
+                  />
+                  <TableCell>
+                    <Button
+                      onClick={(event) => onClickEditCurrency(event, currency)}
+                    >
+                      <EditIcon />
+                    </Button>
+                  </TableCell>
+                </TableRow>
               ))
             )}
           </TableBody>

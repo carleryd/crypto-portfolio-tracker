@@ -1,3 +1,4 @@
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, Grid2 as Grid, Input } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
@@ -18,16 +19,19 @@ const positiveNumberSchema = z
 type Props = {
   currency: StoredCurrency;
   onEditCurrency: (quantity: number) => void;
+  onRemoveCurrency: () => void;
 };
 
-export const EditCurrency = (props: Props) => {
-  const [currencyQuantity, setCurrencyQuantity] = useState(
-    props.currency.quantity,
-  );
+export const EditCurrency = ({
+  currency,
+  onEditCurrency,
+  onRemoveCurrency,
+}: Props) => {
+  const [currencyQuantity, setCurrencyQuantity] = useState(currency.quantity);
 
   useEffect(() => {
-    setCurrencyQuantity(props.currency.quantity);
-  }, [props.currency]);
+    setCurrencyQuantity(currency.quantity);
+  }, [currency]);
 
   const onChangeCurrencyQuantity = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -53,8 +57,13 @@ export const EditCurrency = (props: Props) => {
       return;
     }
 
-    props.onEditCurrency(currencyQuantity);
-  }, [props, currencyQuantity]);
+    onEditCurrency(currencyQuantity);
+  }, [onEditCurrency, currencyQuantity]);
+
+  const onClickRemoveCurrency = useCallback(() => {
+    // TODO: Add confirmation
+    onRemoveCurrency();
+  }, [onRemoveCurrency]);
 
   return (
     <Grid
@@ -74,6 +83,11 @@ export const EditCurrency = (props: Props) => {
       </Grid>
       <Grid padding={2}>
         <Button onClick={onClickEditCurrency}>Edit currency</Button>
+      </Grid>
+      <Grid padding={2}>
+        <Button onClick={onClickRemoveCurrency}>
+          <DeleteIcon /> Remove currency
+        </Button>
       </Grid>
     </Grid>
   );
