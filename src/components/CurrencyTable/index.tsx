@@ -8,10 +8,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
+  styled,
 } from "@mui/material";
 import { FC, useCallback } from "react";
 
-import { formatAssetAmount } from "@/utils/index";
+import { formatCurrencyAmount, formatCurrencyPrice } from "@/utils/index";
 
 import { HoverableTableCell } from "./components/TableCell";
 
@@ -29,6 +31,21 @@ type Props = {
   onSelectCurrency: (currency: Currency) => void;
   onSelectEditCurrency: (currency: Currency) => void;
 };
+
+const CurrencyName = styled(Typography)({
+  fontSize: 14,
+  fontWeight: 600,
+});
+
+const CurrencySymbol = styled(Typography)({
+  fontSize: 14,
+  fontWeight: 300,
+});
+
+const TableHeaderCell = styled(TableCell)({
+  fontSize: 12,
+  fontWeight: 600,
+});
 
 export const CurrencyTable: FC<Props> = ({
   currencies,
@@ -49,12 +66,11 @@ export const CurrencyTable: FC<Props> = ({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Symbol</TableCell>
-              <TableCell>Quantity</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Total Value</TableCell>
-              <TableCell></TableCell>
+              <TableHeaderCell>Name</TableHeaderCell>
+              <TableHeaderCell>Price</TableHeaderCell>
+              <TableHeaderCell>Quantity</TableHeaderCell>
+              <TableHeaderCell>Holdings</TableHeaderCell>
+              <TableHeaderCell align="center">Edit</TableHeaderCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -73,16 +89,24 @@ export const CurrencyTable: FC<Props> = ({
                   onClick={() => onSelectCurrency(currency)}
                   style={{ cursor: "pointer" }}
                 >
-                  <TableCell>{currency.name}</TableCell>
-                  <TableCell>{currency.symbol}</TableCell>
-                  <HoverableTableCell label={currency.quantity.toString()} />
+                  <TableCell>
+                    <Box display="flex" alignItems="center">
+                      <CurrencyName>{currency.name}</CurrencyName>
+                      <CurrencySymbol marginLeft={1}>
+                        {currency.symbol}
+                      </CurrencySymbol>
+                    </Box>
+                  </TableCell>
                   <HoverableTableCell
-                    label={currency.price?.toString() || "-"}
+                    label={
+                      currency.price ? formatCurrencyPrice(currency.price) : "-"
+                    }
                   />
+                  <HoverableTableCell label={currency.quantity.toString()} />
                   <HoverableTableCell
                     label={
                       currency.totalValue
-                        ? formatAssetAmount(currency.totalValue)
+                        ? formatCurrencyAmount(currency.totalValue)
                         : "-"
                     }
                   />

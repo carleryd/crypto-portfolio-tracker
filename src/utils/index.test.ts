@@ -1,7 +1,7 @@
-import { formatAssetAmount } from ".";
+import { formatCurrencyAmount } from ".";
 
-describe("formatAssetAmount", () => {
+describe("formatCurrencyAmount", () => {
   test("formats large numbers correctly", () => {
-    expect(formatAssetAmount(500.55555)).toBe("500.56");
+    expect(formatCurrencyAmount(500.55555)).toBe("500.56");
   });
 });

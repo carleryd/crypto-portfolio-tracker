@@ -119,20 +119,26 @@ export const Portfolio = () => {
   );
 
   return (
-    <>
-      <Grid container justifyContent="center" alignItems="center">
-        <Grid container>
-          <Grid marginTop={1.5} marginBottom={3}>
-            <Typography variant="h3">Portfolio</Typography>
-          </Grid>
-        </Grid>
+    <Grid container padding={2} justifyContent="center" alignItems="center">
+      <Grid marginBottom={3}>
+        <Typography variant="h3">Portfolio</Typography>
       </Grid>
-      <CurrencyTable
-        currencies={currencies.map(populateCurrencyTotalValue)}
-        onSelectCurrency={onSelectCurrency}
-        onSelectEditCurrency={onSelectEditCurrency}
-      />
-      <Button onClick={onClickAddNewHolding}>Add new holding</Button>
-    </>
+      <Grid padding={2}>
+        <CurrencyTable
+          currencies={currencies.map(populateCurrencyTotalValue)}
+          onSelectCurrency={onSelectCurrency}
+          onSelectEditCurrency={onSelectEditCurrency}
+        />
+      </Grid>
+      <Grid padding={2}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={onClickAddNewHolding}
+        >
+          Add new holding
+        </Button>
+      </Grid>
+    </Grid>
   );
 };

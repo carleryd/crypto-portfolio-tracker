@@ -7,12 +7,13 @@ export const THEME_BACKGROUND = {
 
 const theme = createTheme({
   palette: {
-    primary: { main: "#1750AC" },
+    primary: { main: "#222531" },
     secondary: { main: "#FFFFFF" },
     background: {
       default: THEME_BACKGROUND.DEFAULT,
       paper: THEME_BACKGROUND.PAPER,
     },
+    text: { primary: "#222531" },
   },
 });
 
