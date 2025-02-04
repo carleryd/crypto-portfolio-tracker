@@ -33,6 +33,7 @@ The future of this project is very unclear, but below are some improvements whic
   - Add an API server (backend proxy) to forward Coingecko API requests.
   - Add a rate limiter to the API server.
   - Add domain restricting CORS rules to only allow requests coming from our client.
+- Keep currencies in sync with Coingecko by fetching all currencies in LocalStorage with updated prices on entering app.
 - Prevent creating multiple holdings in the same currency.
 - Ask for confirmation when removing a holding.
 - Uniform location for handling conversion of Remote (Coingecko) and Internal (Lightweight charts) types
